@@ -1,0 +1,36 @@
+# --- File Read & Write ---
+# Write some text into input.txt
+file = open("input.txt", "w")
+file.write("Hello World\nThis is Python\nFile handling is fun\n")
+file.close()
+
+# Read input.txt and write modified version to output.txt
+file = open("input.txt", "r")
+content = file.read()
+file.close()
+
+file = open("output.txt", "w")
+file.write(content.upper())   # convert to uppercase
+file.close()
+
+print(" Modified content written to output.txt")
+
+# --- Error Handling Lab ---
+filename = input("\nEnter the filename you want to read: ")
+
+try:
+    file = open(filename, "r")
+    data = file.read()
+    print("\n File Content:")
+    print(data)
+except FileNotFoundError:
+    print("File not found!")
+except Exception as e:
+    print(f"An error occurred: {e}")
+finally:
+    print("File operation completed")
+    try:
+        file.close()
+    except:
+        pass
+
