@@ -1,0 +1,72 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('diabetes_012_health_indicators_BRFSS2015.csv')
+
+df.head()
+
+df.columns
+
+df.shape #(rows, columns)
+
+# Basic exploration 
+print("=== Community needs Snapshot ===")
+print(f"Total People: {len(df)}")
+print(f"Average Age: {df['Age'].mean():.1f} years")
+print(f"Most type : {df['Diabetes_012'].mode()[0]}")
+print(f"Average income: {df['Income'].mean():.2f}/10")
+
+# Let’s see the gender distribution
+print("\n=== Sex Harmony ===")
+print(df['Sex'].value_counts())
+
+# Visualization
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df, x='Diabetes_012', palette='viridis')
+plt.title("Diabetes Survey", fontsize=16)
+plt.xlabel("Diabetes_012")
+plt.ylabel("Number of People")
+plt.xticks(rotation=45)
+plt.show()
+
+# missing data
+
+print("\n=== Before Healing ===")
+print(f"Missing Diabetes Type: {df['Diabetes_012'].isnull().sum()}")
+
+# fill missing values
+avg_type = df['Diabetes_012'].mean()
+df['Diabetes_012'].fillna(avg_type, inplace=True)
+
+print("=== After Healing ===")
+print(f"Missing Diabetes Type: {df['Diabetes_012'].isnull().sum()}")
+print(f"Filled with community average: {avg_type:.2f}")
+
+# graphs
+plt.figure(figsize=(12, 6))
+sns.boxplot(data=df, x='Diabetes_012', y='HvyAlcoholConsump', palette='Set2')
+plt.title(" Diabetes by Alcohol", fontsize=16)
+plt.xlabel("Diabetes_012")
+plt.ylabel("HvyAlchololConsump")
+plt.xticks(rotation=45)
+plt.show()
+
+# Insight: diabete by Sex!
+avg_diabete_by_sex = df.groupby('Diabetes_012')['Sex'].mean()
+print("\n=== Average Diabetes  by Sex ===")
+print(avg_diabete_by_sex.round(2))
+
+# graphs
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=df, x='Diabetes_012', y='HvyAlcoholConsump', hue='HeartDiseaseorAttack', palette='deep', s=100)
+plt.title("Diabetes type vs Heavy Alochol vs HeartDisease or Attack", fontsize=16)
+plt.xlabel("Diabetes_012")
+plt.ylabel("HvyAlcoholConsump")
+plt.legend(title='HeartdiseaseorAttack')
+plt.show()
+
+# Correlation check
+corr = df['HvyAlcoholConsump'].corr(df['HeartDiseaseorAttack'])
+print(f"\nCorrelation between Heavy Alcholol Consumption and HeartDiseaseAttack: {corr:.2f}")
