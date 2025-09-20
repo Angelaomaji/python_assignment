@@ -1,0 +1,33 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("metadata.csv")
+
+# Preview
+print(df.shape)
+print(df.head())
+print(df.info())
+print(df.isnull().sum())
+
+# Handle missing publish_time
+df = df.dropna(subset=['publish_time'])
+
+# Convert dates
+df['publish_time'] = pd.to_datetime(df['publish_time'], errors='coerce')
+df['year'] = df['publish_time'].dt.year
+
+# Abstract word count
+df['abstract_word_count'] = df['abstract'].fillna("").apply(lambda x: len(x.split()))
+
+
+year_counts = df['year'].value_counts().sort_index()
+plt.figure(figsize=(10,6))
+sns.barplot(x=year_counts.index, y=year_counts.values, color="skyblue")
+plt.title("Publications by Year")
+plt.xlabel("Year")
+plt.ylabel("Count")
+plt.show()
+
+from wordcloud import WordCloud
+
